@@ -73,7 +73,12 @@
   <rudder-pos-norm type="float"> 0.0 </rudder-pos-norm>
   <flap-pos-norm type="float"> 0.0 </flap-pos-norm>
  </surface-positions>
-
+ <multiplay>
+    <generic>
+        <string n="9" type="string"/>
+        <int n="10" alias="controls/armament/trigger" />
+    </generic>
+ </multiplay>
 
  <nasal>
   <!-- Nasal Carrier View -->
