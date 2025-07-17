@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!-- Tractor Yellow 3A -->
+<PropertyList>
+
+  <path>mule-22.ac</path>
+
+  <model>
+    <path>../beacon/beacon.xml</path>
+    <offsets>
+      <x-m> -0.220 </x-m>
+      <y-m>  0.630 </y-m>
+      <z-m>  1.028 </z-m>
+    </offsets>
+  </model>
+
+  <!-- *** LoD *** -->
+  <animation>
+    <type>range</type>
+    <object-name>Mule-22</object-name>
+    <max-m>5000</max-m>
+  </animation>
+
+</PropertyList>

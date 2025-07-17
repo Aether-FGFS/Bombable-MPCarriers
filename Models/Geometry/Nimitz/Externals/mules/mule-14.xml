@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!-- altimeter -->
+<PropertyList>
+
+  <path>mule-14.ac</path>
+
+  <!-- *** LoD *** -->
+  <animation>
+    <type>range</type>
+    <object-name>Mule-14</object-name>
+    <max-m>5000</max-m>
+  </animation>
+
+</PropertyList>

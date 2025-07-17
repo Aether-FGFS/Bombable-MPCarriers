@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!-- Sea Sparrow SAM -->
+<PropertyList>
+
+  <path>sea-sparrow.ac</path>
+
+  <animation>
+    <object-name>Pedestal</object-name>
+    <object-name>Box-Launcher</object-name>
+  </animation>
+
+  <!-- *** LoD *** -->
+  <animation>
+    <type>range</type>
+    <object-name>Pedestal</object-name>
+    <object-name>Box-Launcher</object-name>
+    <max-m>1000</max-m>
+  </animation>
+
+</PropertyList>

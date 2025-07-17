@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!-- Phalanx CIWS -->
+<PropertyList>
+
+  <path>phalanx.ac</path>
+
+  <!-- *** LoD *** -->
+  <animation>
+    <type>range</type>
+    <!--<object-name>Phalanx</object-name>-->
+    <max-m>1000</max-m>
+  </animation>
+
+</PropertyList>
