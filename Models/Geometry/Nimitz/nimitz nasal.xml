@@ -1,0 +1,765 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<PropertyList>
+
+  <description>Nimitz</description>
+  <author>Helijah</author>
+  <status>early-production</status>
+  <path>nimitz.ac</path>
+
+  <nasal>
+    <load>
+      <![CDATA[
+
+        var self = cmdarg();
+        print("Model load Nimitz ", self.getPath());
+        var pathc = self.getPath();
+
+        # timescales
+
+        var elevator_transit_time = 30.0;
+        var jbd_transit_time = 5.0;
+
+        # register the dialog
+
+        setprop(pathc~"/dlg-name", "Nimitz");
+
+        # init course control,  animation and detail properties
+
+        setprop("/controls/nimitz/deck-park",0);
+        setprop("/controls/nimitz/crew",0);
+        setprop("/controls/nimitz/lights", 0);
+
+        setprop("/controls/nimitz/turn-to-launch-hdg", 0);
+        setprop("/controls/nimitz/turn-to-recovery-hdg", 0);
+        setprop("/controls/nimitz/turn-to-base-course", 1);
+
+        ################
+        #  elevators
+
+        setprop("/controls/nimitz/elevator[0]/state",1);
+        setprop("/controls/nimitz/elevator[1]/state",0);
+
+        var elevator1 = aircraft.door.new(pathc~"/surface-positions/elevator[0]", elevator_transit_time, 1);
+        var elevator2 = aircraft.door.new(pathc~"/surface-positions/elevator[1]", elevator_transit_time, 0);
+
+        var elevator_array = [elevator1, elevator2];
+
+        ################
+        # jet blast deflectors
+
+        setprop("/controls/nimitz/jbd[0]/state", 0);
+        setprop("/controls/nimitz/jbd[1]/state", 0);
+        setprop("/controls/nimitz/jbd[2]/state", 0);
+        setprop("/controls/nimitz/jbd[3]/state", 0);
+
+        var jbd1 = aircraft.door.new(pathc~"/surface-positions/jbd[0]", jbd_transit_time, 0);
+        var jbd2 = aircraft.door.new(pathc~"/surface-positions/jbd[1]", jbd_transit_time, 0);
+        var jbd3 = aircraft.door.new(pathc~"/surface-positions/jbd[2]", jbd_transit_time, 0);
+        var jbd4 = aircraft.door.new(pathc~"/surface-positions/jbd[3]", jbd_transit_time, 0);
+
+        var jbd_array = [jbd1, jbd2, jbd3, jbd4];
+
+        # elevator control
+
+        var elevator_operate = func (i){
+
+          var tgt = getprop("/controls/nimitz/elevator["~i~"]/state");
+          if (tgt == 1) {
+            print ("Elevator ", i+1, " up.");
+            elevator_array[i].open();
+          } else {
+            print ("Elevator ", i+1, " down.");
+            elevator_array[i].close();
+          }
+        }
+        # JBD control
+        var jbd_operate = func (i) {
+
+          var tgt = getprop("/controls/nimitz/jbd["~i~"]/state");
+          if (tgt == 1) {
+            print ("JBD ", i+1, " up.");
+            jbd_array[i].open();
+          } else {
+            print ("JBD ", i+1, " down.");
+            jbd_array[i].close();
+          }
+        }
+        # lighting control
+
+        var toggle_lights = func {
+
+          var state = getprop(pathc~"/controls/lighting/deck-lights");
+
+          if (state == 0) {
+            setprop(pathc~"/controls/lighting/deck-lights", 1);
+            setprop(pathc~"/controls/lighting/flood-lights-red-norm", 0.7);
+          } else {
+            setprop(pathc~"/controls/lighting/deck-lights", 0);
+            setprop(pathc~"/controls/lighting/flood-lights-red-norm", 0.0);
+          }
+        }
+        fn_an_spn_46 = getprop("/sim/fg-root") ~ "/Aircraft/Generic/an_spn_46.nas";
+        io.load_nasal(fn_an_spn_46, "an_spn_46");
+        var anspn = an_spn_46.ANSPN46_System.new("Nimitz", self);
+        anspn.SetChannel(2);
+        var an_spn_46_timer = maketimer(6, func {
+          anspn.Update();
+          an_spn_46_timer.restart(anspn.GetUpdateRate());
+        });
+        an_spn_46_timer.restart(6);
+
+        # listeners
+
+        var l_elev1 = setlistener("/controls/nimitz/elevator/state", func {elevator_operate(0);},0,0);
+        var l_elev2 = setlistener("/controls/nimitz/elevator[1]/state", func {elevator_operate(1);},0,0);
+
+        var l_jbd1 = setlistener("/controls/nimitz/jbd[0]/state", func {jbd_operate(0);},0,0);
+        var l_jbd2 = setlistener("/controls/nimitz/jbd[1]/state", func {jbd_operate(1);},0,0);
+        var l_jbd3 = setlistener("/controls/nimitz/jbd[2]/state", func {jbd_operate(2);},0,0);
+        var l_jbd4 = setlistener("/controls/nimitz/jbd[3]/state", func {jbd_operate(3);},0,0);
+
+        var l_lights = setlistener("/controls/nimitz/lights", func {toggle_lights();},0,0);
+
+              var nodeName = cmdarg().getPath();
+
+      print("Loading nimitz ", nodeName);
+
+      if ( bombable.check_overall_initialized (nodeName) ) {
+        return;
+      }
+
+      var ferry_init = func() {
+        thisNodeName = cmdarg().getPath();
+
+        var bombableObject = {
+
+          objectNodeName : thisNodeName,
+          objectNode     : props.globals.getNode(thisNodeName),
+          updateTime_s   : 1/2,
+
+          altitudes : {
+            wheelsOnGroundAGL_m : 0,
+            minimumAGL_m        : 0,
+            maximumAGL_m        : 0,
+            crashedAGL_m        : -2,
+          },
+          velocities : {
+            maxSpeedReduce_percent                       : 3,
+            minSpeed_kt                                  : 0,
+            cruiseSpeed_kt                               : 0,
+            attackSpeed_kt                               : 0,
+            maxSpeed_kt                                  : 0,
+            damagedAltitudeChangeMaxRate_meterspersecond : .051,
+          },
+          evasions : {
+            dodgeDelayMax_sec             : 60,
+            dodgeDelayMin_sec             : 30,
+            dodgeMax_deg                  : 88,
+            dodgeMin_deg                  : 15,
+            dodgeROverLPreference_percent : 50,
+            dodgeAltMax_m                 : 0,
+            dodgeAltMin_m                 : 0,
+          },
+          attacks : {
+            maxDistance_m              : 1,
+            minDistance_m              : 10000,
+            continueAttackAngle_deg    : 60,
+            altitudeHigherCutoff_m     : 5600,
+            altitudeLowerCutoff_m      : 1,
+            rollMin_deg                : 0,
+            rollMax_deg                : 0,
+            climbPower                 : 0,
+            divePower                  : 0,
+            attackCheckTime_sec        : 10,
+            attackCheckTimeEngaged_sec : 1,
+          },
+          weapons : {
+            front_gun : {
+              name                : "Anti-Aircraft Gun - Front",
+              maxDamage_percent   : 4,
+              maxDamageDistance_m : 300,
+              weaponAngle_deg     : { heading: 0, elevation: 45 },
+              weaponOffset_m      : { x:0, y:-2, z:1 },
+              weaponSize_m        : { start:0.15, end:0.15 },
+            },
+            rear_gun : {
+              name                : "Anti-Aircraft Gun - Rear",
+              maxDamage_percent   : 4,
+              maxDamageDistance_m : 700,
+              weaponAngle_deg     : { heading: 180, elevation: 45 },
+              weaponOffset_m      : { x:0, y:-2, z:1 },
+              weaponSize_m        : { start:0.15, end:0.14 },
+            },
+            rightfront_gun : {
+              name                : "Anti-Aircraft Gun - Right/Front",
+              maxDamage_percent   : 4,
+              maxDamageDistance_m : 700,
+              weaponAngle_deg     : { heading: 60, elevation: 45 },
+              weaponOffset_m      : { x:1, y:1, z:1 },
+              weaponSize_m        : { start:0.15, end:0.14 },
+            },
+          },
+          dimensions : {
+            width_m             : 75,
+            length_m            : 300,
+            height_m            : 75,
+            damageRadius_m      : 60,
+            vitalDamageRadius_m : 30,
+            crashRadius_m       : 20,
+          },
+          vulnerabilities : {
+            damageVulnerability               : 1,
+            engineDamageVulnerability_percent : 20,
+            fireVulnerability_percent         : 65,
+            fireDamageRate_percentpersecond   : 0.03,
+            fireExtinguishMaxTime_seconds     : 1400,
+            fireExtinguishSuccess_percentage  : 65,
+            explosiveMass_kg                  : 3500000,
+          },
+          damageLiveries : {
+            damageLivery : [  ]
+          },
+        };
+        bombable.initialize ( bombableObject );
+        # bombable.location_init ( thisNodeName );
+        bombable.ground_init ( thisNodeName );
+        bombable.bombable_init ( thisNodeName );
+        bombable.attack_init ( thisNodeName );
+        bombable.weapons_init ( thisNodeName );
+        bombable.startSmoke("pistonexhaust", thisNodeName );
+      }
+      object_init();
+
+      ]]>
+    </load>
+    <unload>
+      <![CDATA[
+        an_spn_46_timer.stop();
+
+        # clean up listeners
+
+        removelistener(l_elev_1);
+        removelistener(l_elev_2);
+
+        removelistener(l_jbd_1);
+        removelistener(l_jbd_2);
+        removelistener(l_jbd_3);
+        removelistener(l_jbd_4);
+
+        removelistener(l_lights);
+
+        print("Unload Nimitz.");
+        var nodeName = cmdarg().getPath();
+        bombable.de_overall_initialize( nodeName );
+        bombable.initialize_del( nodeName );
+        bombable.ground_del( nodeName );
+        bombable.location_del (nodeName);
+        bombable.bombable_del( nodeName );
+        bombable.attack_del( nodeName );
+        bombable.weapons_del (nodeName);
+
+      ]]>
+    </unload>
+  </nasal>
+
+  <animation>
+    <object-name>Hull</object-name>
+    <object-name>Flightdeck</object-name>
+    <object-name>Crew</object-name>
+    <object-name>Crew1</object-name>
+    <object-name>JBD-1</object-name>
+    <object-name>JBD-2</object-name>
+    <object-name>JBD-3</object-name>
+    <object-name>JBD-4</object-name>
+    <object-name>Elevator-1-Base</object-name>
+    <object-name>Elevator-2-Base</object-name>
+    <object-name>Elevator-3-Base</object-name>
+    <object-name>Elevator-1-Deck</object-name>
+    <object-name>Elevator-2-Deck</object-name>
+    <object-name>Elevator-3-Deck</object-name>
+    <object-name>SPS-48-Antenna</object-name>
+    <object-name>SPS-49-Antenna</object-name>
+    <object-name>Pilot-Mast</object-name>
+    <object-name>Nav-Bridge-Deck</object-name>
+    <object-name>Flag-Bridge-Deck</object-name>
+
+    <object-name>wire-1</object-name>
+    <object-name>wire-2</object-name>
+    <object-name>wire-3</object-name>
+    <object-name>wire-4</object-name>
+    <object-name>cat-1</object-name>
+    <object-name>cat-2</object-name>
+    <object-name>cat-3</object-name>
+    <object-name>cat-4</object-name>
+  </animation>
+
+  <effect>
+    <inherits-from>Effects/model-transparent</inherits-from>
+    <object-name>wire-1</object-name>
+    <object-name>wire-2</object-name>
+    <object-name>wire-3</object-name>
+    <object-name>wire-4</object-name>
+    <object-name>cat-1</object-name>
+    <object-name>cat-2</object-name>
+    <object-name>cat-3</object-name>
+    <object-name>cat-4</object-name>
+  </effect>
+
+  <!-- crew to be added later
+  <model>
+    <path>Models/Geometry/Nimitz/Crew/crew.xml</path>
+  </model>
+  -->
+
+  <!-- jet blast deflectors -->
+  <animation>
+    <type>pick</type>
+    <object-name>JBD-1</object-name>
+    <action>
+      <button>0</button>
+      <repeatable>false</repeatable>
+      <binding>
+        <command>property-toggle</command>
+        <property>/controls/nimitz/jbd[0]/state</property>
+      </binding>
+    </action>
+    <hovered>
+      <binding>
+        <command>set-tooltip</command>
+        <tooltip-id>jbd1</tooltip-id>
+        <label>operate JBD1</label>
+      </binding>
+    </hovered>
+  </animation>
+
+  <animation>
+    <type>pick</type>
+    <object-name>JBD-2</object-name>
+    <action>
+      <button>0</button>
+      <repeatable>false</repeatable>
+      <binding>
+        <command>property-toggle</command>
+        <property>/controls/nimitz/jbd[1]/state</property>
+      </binding>
+    </action>
+    <hovered>
+      <binding>
+        <command>set-tooltip</command>
+        <tooltip-id>jbd2</tooltip-id>
+        <label>operate JBD2</label>
+      </binding>
+    </hovered>
+  </animation>
+
+  <animation>
+    <type>pick</type>
+    <object-name>JBD-3</object-name>
+    <action>
+      <button>0</button>
+      <repeatable>false</repeatable>
+      <binding>
+        <command>property-toggle</command>
+        <property>/controls/nimitz/jbd[2]/state</property>
+      </binding>
+    </action>
+    <hovered>
+      <binding>
+        <command>set-tooltip</command>
+        <tooltip-id>jbd3</tooltip-id>
+        <label>operate JBD3</label>
+      </binding>
+    </hovered>
+  </animation>
+
+  <animation>
+    <type>pick</type>
+    <object-name>JBD-4</object-name>
+    <action>
+      <button>0</button>
+      <repeatable>false</repeatable>
+      <binding>
+        <command>property-toggle</command>
+        <property>/controls/nimitz/jbd[3]/state</property>
+      </binding>
+    </action>
+    <hovered>
+      <binding>
+        <command>set-tooltip</command>
+        <tooltip-id>jbd4</tooltip-id>
+        <label>operate JBD4</label>
+      </binding>
+    </hovered>
+  </animation>
+
+  <animation>
+    <type>pick</type>
+    <object-name>Flightdeck</object-name>
+    <action>
+      <button>0</button>
+      <repeatable>false</repeatable>
+      <binding>
+        <command>property-toggle</command>
+        <property>/controls/nimitz/lights</property>
+      </binding>
+    </action>
+    <hovered>
+      <binding>
+        <command>set-tooltip</command>
+        <tooltip-id>lights</tooltip-id>
+        <label>switch lights</label>
+      </binding>
+    </hovered>
+  </animation>
+
+  <animation>
+    <type>rotate</type>
+    <object-name>JBD-1</object-name>
+    <property>surface-positions/jbd[0]/position-norm</property>
+    <factor>70</factor>
+    <axis>
+      <x1-m>  9.53270 </x1-m>
+      <y1-m> 22.62000 </y1-m>
+      <z1-m> 20.00000 </z1-m>
+      <x2-m>  9.54471 </x2-m>
+      <y2-m> 13.11000 </y2-m>
+      <z2-m> 20.00000 </z2-m>
+    </axis>
+  </animation>
+
+  <animation>
+    <type>rotate</type>
+    <object-name>JBD-2</object-name>
+    <property>surface-positions/jbd[1]/position-norm</property>
+    <factor>70</factor>
+    <axis>
+      <x1-m> 17.58610 </x1-m>
+      <y1-m>  0.73414 </y1-m>
+      <z1-m> 20.00000 </z1-m>
+      <x2-m> 17.58611 </x2-m>
+      <y2-m> -8.77131 </y2-m>
+      <z2-m> 20.00000 </z2-m>
+    </axis>
+  </animation>
+
+  <!-- non-op until I can figure out a way of stopping JBD3 &  4 interfering -->
+  <animation>
+    <type>rotate</type>
+    <object-name>JBD-3</object-name>
+    <property>surface-positions/jbd[2]/position-norm</property>
+    <factor>70</factor>
+    <axis>
+      <x1-m> 107.7090 </x1-m>
+      <y1-m> -15.4622 </y1-m>
+      <z1-m>  20.0000 </z1-m>
+      <x2-m> 107.7100 </x2-m>
+      <y2-m> -25.0340 </y2-m>
+      <z2-m>  20.0000 </z2-m>
+    </axis>
+  </animation>
+
+  <animation>
+    <type>rotate</type>
+    <object-name>JBD-4</object-name>
+    <property>surface-positions/jbd[3]/position-norm</property>
+    <factor>70</factor>
+    <axis>
+      <x1-m> 125.4710 </x1-m>
+      <y1-m> -26.5776 </y1-m>
+      <z1-m>  20.0000 </z1-m>
+      <x2-m> 125.4590 </x2-m>
+      <y2-m> -35.2367 </y2-m>
+      <z2-m>  20.0000 </z2-m>
+    </axis>
+  </animation>
+
+  <!-- elevators -->
+  <animation>
+    <name>Elevator-1</name>
+    <object-name>Elevator-1-Base</object-name>
+    <object-name>Elevator-1-Deck</object-name>
+  </animation>
+
+  <animation>
+    <name>Elevator-2</name>
+    <object-name>Elevator-2-Base</object-name>
+    <object-name>Elevator-2-Deck</object-name>
+  </animation>
+
+  <animation>
+    <name>Elevator-3</name>
+    <object-name>Elevator-3-Base</object-name>
+    <object-name>Elevator-3-Deck</object-name>
+  </animation>
+
+  <animation>
+    <type>pick</type>
+    <object-name>Elevator-1</object-name>
+    <action>
+      <button>0</button>
+      <repeatable>false</repeatable>
+      <binding>
+        <command>property-toggle</command>
+        <property>/controls/nimitz/elevator[1]/state</property>
+      </binding>
+    </action>
+    <hovered>
+      <binding>
+        <command>set-tooltip</command>
+        <tooltip-id>elev2</tooltip-id>
+        <label>move elevator 2</label>
+      </binding>
+    </hovered>
+  </animation>
+
+  <animation>
+    <type>pick</type>
+    <object-name>Elevator-2</object-name>
+    <action>
+      <button>0</button>
+      <repeatable>false</repeatable>
+      <binding>
+        <command>property-toggle</command>
+        <property>/controls/nimitz/elevator/state</property>
+      </binding>
+    </action>
+    <hovered>
+      <binding>
+        <command>set-tooltip</command>
+        <tooltip-id>elev1</tooltip-id>
+        <label>move elevator 1</label>
+      </binding>
+    </hovered>
+  </animation>
+
+  <animation>
+    <type>translate</type>
+    <object-name>Elevator-1</object-name>
+    <object-name>tractor-15</object-name>
+    <object-name>Crew1</object-name>
+    <property>surface-positions/elevator[1]/position-norm</property>
+    <factor>10.62</factor>
+    <axis>
+      <x> 0 </x>
+      <y> 0 </y>
+      <z> 1 </z>
+    </axis>
+  </animation>
+
+  <animation>
+    <type>translate</type>
+    <object-name>Elevator-2</object-name>
+    <property>surface-positions/elevator[0]/position-norm</property>
+    <factor>10.62</factor>
+    <axis>
+      <x> 0 </x>
+      <y> 0 </y>
+      <z> 1 </z>
+    </axis>
+  </animation>
+
+  <!-- Flood Lights red -->
+  <animation>
+    <type>material</type>
+    <object-name>Flightdeck</object-name>
+    <emission>
+      <factor-prop>controls/lighting/flood-lights-red-norm</factor-prop>
+      <factor> 0.75 </factor>
+      <red>    0.75 </red>
+      <green>  0.25 </green>
+      <blue>   0.25 </blue>
+    </emission>
+  </animation>
+
+  <animation>
+    <type>material</type>
+    <object-name>Elevator-1-Deck</object-name>
+    <object-name>Elevator-2-Deck</object-name>
+    <object-name>Elevator-3-Deck</object-name>
+    <object-name>Elevator-4-Deck</object-name>
+    <emission>
+      <factor-prop>controls/lighting/flood-lights-red-norm</factor-prop>
+      <factor> 0.75 </factor>
+      <red>    0.75 </red>
+      <green>  0.25 </green>
+      <blue>   0.25 </blue>
+    </emission>
+  </animation>
+
+  <animation>
+    <type>interaction</type>
+    <object-name>cat-1</object-name>
+    <object-name>cat-2</object-name>
+    <object-name>cat-3</object-name>
+    <object-name>cat-4</object-name>
+    <interaction-type>carrier-catapult</interaction-type>
+  </animation>
+
+  <animation>
+    <type>interaction</type>
+    <object-name>wire-1</object-name>
+    <object-name>wire-2</object-name>
+    <object-name>wire-3</object-name>
+    <object-name>wire-4</object-name>
+    <interaction-type>carrier-wire</interaction-type>
+  </animation>
+
+  <!-- ********************************************** -->
+  <model>
+    <path>Externals/all-externals.xml</path>
+  </model>
+
+  <!--
+  <animation>
+    <type>select</type>
+    <object-name>glide-path</object-name>
+      <condition>
+        <equals>
+          <property>controls/glide-path</property>
+        <value type="bool">true</value>
+      </equals>
+    </condition>
+  </animation>
+  -->
+
+  <animation>
+    <type>rotate</type>
+    <object-name>SPS-48-Antenna</object-name>
+    <property>/sim/time/elapsed-sec</property>
+    <factor>40</factor>
+    <center>
+      <x-m> 99.54799 </x-m>
+      <y-m> 29.40700 </y-m>
+      <z-m> 38.97895 </z-m>
+    </center>
+    <axis>
+      <x> 0 </x>
+      <y> 0 </y>
+      <z> 1 </z>
+    </axis>
+  </animation>
+
+  <animation>
+    <type>rotate</type>
+    <object-name>SPS-49-Antenna</object-name>
+    <property>/sim/time/elapsed-sec</property>
+    <factor>50</factor>
+    <center>
+      <x-m> 130.1390 </x-m>
+      <y-m>  30.7926 </y-m>
+      <z-m>  37.9823 </z-m>
+    </center>
+    <axis>
+      <x> 0 </x>
+      <y> 0 </y>
+      <z> 1 </z>
+    </axis>
+  </animation>
+
+  <animation>
+    <type>select</type>
+    <object-name>Crew</object-name>
+    <object-name>Crew1</object-name>
+    <condition>
+      <property>/controls/nimitz/crew</property>
+    </condition>
+  </animation>
+
+  <animation>
+    <type>select</type>
+    <object-name>Pilot-Mast</object-name>
+    <condition>
+      <or>
+        <not><property>controls/in-to-wind</property></not>
+        <not><property>controls/turn-to-launch-hdg</property></not>
+      </or>
+    </condition>
+  </animation>
+
+  <!--Deck Edge Lights-->
+  <deck>
+    <offsets>
+      <z-m>20.0238</z-m>
+    </offsets>
+  </deck>
+
+  <!-- *** Effects *** -->
+  <model>
+    <name>cat-steam-1</name>
+    <path>Externals/Effects/cat-steam.xml</path>
+    <offsets>
+      <x-m> -105.4050 </x-m>
+      <y-m>    8.1564 </y-m>
+      <z-m>   20.0000 </z-m>
+      <heading-deg> 4 </heading-deg>
+    </offsets>
+  </model>
+
+  <model>
+    <name>cat-steam-1-eng</name>
+    <path>Externals/Effects/cat-steam-eng.xml</path>
+    <offsets>
+      <x-m> -3.6539 </x-m>
+      <y-m> 15.2715 </y-m>
+      <z-m> 20.0000 </z-m>
+      <heading-deg> 176 </heading-deg>
+    </offsets>
+  </model>
+
+  <model>
+    <name>cat-steam-2</name>
+    <path>Externals/Effects/cat-steam.xml</path>
+    <offsets>
+      <x-m> -100.37600 </x-m>
+      <y-m>   -6.39604 </y-m>
+      <z-m>   20.00000 </z-m>
+      <heading-deg> 1 </heading-deg>
+    </offsets>
+    <overlay>
+      <particlesystem>
+        <placer>
+          <type>segments</type>
+          <vertex>
+            <x-m> 0 </x-m>
+            <y-m> 0 </y-m>
+            <z-m> 0 </z-m>
+          </vertex>
+          <vertex>
+            <x-m> 51 </x-m>
+            <y-m>  0 </y-m>
+            <z-m>  0 </z-m>
+          </vertex>
+          <vertex>
+            <x-m> 102 </x-m>
+            <y-m>   0 </y-m>
+            <z-m>   0 </z-m>
+          </vertex>
+        </placer>
+      </particlesystem>
+    </overlay>
+  </model>
+
+  <animation>
+    <type>pick</type>
+    <object-name>Nav-Bridge-Deck</object-name>
+    <object-name>Flag-Bridge-Deck</object-name>
+    <action>
+      <button>0</button>
+      <repeatable>false</repeatable>
+      <binding>
+        <command>dialog-show</command>
+        <dialog-name>Nimitz</dialog-name>
+        <property></property>
+      </binding>
+    </action>
+    <hovered>
+      <binding>
+        <command>set-tooltip</command>
+        <tooltip-id>bridge</tooltip-id>
+        <label>show Nimitz control dialog</label>
+      </binding>
+    </hovered>
+  </animation>
+
+</PropertyList>
