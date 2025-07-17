@@ -160,7 +160,9 @@
 				<float n="6"
 							 alias="/instrumentation/radar/target-alt"/>
 				<int n="0"
-						 alias="/ai/submodels/launch-master"/>
+						         alias="/ai/submodels/launch-master"/>
+				<string n="9" type="string"/>
+                                <int n="10" alias="controls/armament/trigger" />
 			</generic>
 		</multiplay>
 
