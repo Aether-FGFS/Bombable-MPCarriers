@@ -73,7 +73,7 @@
                    <string n="9" type="string"/>
                    <int n="10" alias="controls/armament/trigger" />
                  </generic>
- </multiplay>
+         </multiplay>
 	</sim>
 
 	<controls>
