@@ -1,4 +1,4 @@
-This is Bombable MPCarriers Compilation, for Flightgear Flight Simulator, and Bombable-5.0 Addon. 
+This is Bombable MPCarriers Compilation for Flightgear Flight Simulator and Bombable-5.0 Addon. 
 
 Installation:  Copy Aircraft and Models folders into your fgdata directory and overwrite all files. 
 
