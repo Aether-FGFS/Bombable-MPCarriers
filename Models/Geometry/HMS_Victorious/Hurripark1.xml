@@ -1,0 +1,20 @@
+<?xml version="1.0" ?>
+
+<!-- Sea-hurricane model config file -->
+<!-- LesterBoffo modded Bory's E2C deckpark .xml/04/03 -->
+
+<PropertyList>
+
+	<path>hurri1.ac</path>
+
+
+	<animation>
+		<type>select</type>
+		<object-name>hurri1</object-name>
+		<condition>
+			<property>sim/current-view/deck-park</property>
+		</condition>
+	</animation>
+
+
+</PropertyList>
