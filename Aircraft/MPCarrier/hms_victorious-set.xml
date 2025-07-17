@@ -130,6 +130,14 @@
      <mp-carriers>
       <hms-victorious-callsign type="string"></hms-victorious-callsign>
      </mp-carriers>
+	 
+     <multiplay>
+      <generic>
+        <string n="9" type="string"/>
+        <int n="10" alias="controls/armament/trigger" />
+      </generic>
+     </multiplay>
+	 
  </sim>
 
         <current-view>
