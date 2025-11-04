@@ -4,7 +4,7 @@ ________________________________________________________________________________
 Installation: Make backup of fgdata/models/Geometry/All Carriers. Copy Aircraft, AI and Models folders into your
  fgdata directory and overwrite all files. 
 
-Bombable MPCarriers are compatible with default MPCarriers, however, some feautures as MP lights and elevatora do 
+Bombable MPCarriers are compatible with default MPCarriers, however, some feautures as MP lights and elevators do 
  not work at the time.
 
 To change position of MPCarrier, navigate to fgdata/AI folder and find desired Carrier. Open the file and
