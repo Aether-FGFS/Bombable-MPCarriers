@@ -4,8 +4,7 @@ ________________________________________________________________________________
 Installation: Make backup of fgdata/models/Geometry/All Carriers. Copy Aircraft, AI and Models folders into your
  fgdata directory and overwrite all files. 
 
-Bombable MPCarriers are compatible with default MPCarriers, however, some feautures as MP lights and elevators do 
- not work at the time.
+Bombable MPCarriers are compatible with default MPCarriers, however, some feautures as MP lights and elevators will fully work only at Nimitz at the time.
 
 To change position of MPCarrier, navigate to fgdata/AI folder and find desired Carrier. Open the file and
  change latitude and longitude coordinates.  
@@ -14,6 +13,6 @@ To change position of MPCarrier, navigate to fgdata/AI folder and find desired C
  Remember that war is disaster for regular people and soldiers.
 
 
- Aether 2025.
+ Aether 2026.
 
 
