@@ -9,15 +9,15 @@
 -->
 
 
-<PropertyList  include="HMS-Victorious-bombableinclude.xml">
+<PropertyList include="HMS-Victorious-bombableinclude.xml">
 
       <description>HMS-Victorious - R38</description>
-	<author>LesterBoffo modified from Flying Stations Websites free download AI HMS Victorious carrier, Aether</author>
+	<author>LesterBoffo modified from Flying Stations Websites free download AI HMS Victorious carrier</author>
 	<status>early-production</status>
       <path>hms_victorious_r38.ac</path>
  
 
-	
+
 
       <model>
 		 <name>Wakes</name>
