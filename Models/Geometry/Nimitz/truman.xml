@@ -10,13 +10,14 @@ Streamlined for inclusion in FG
 by Thorsten Renk 2017
 
 -->
-<PropertyList  include="truman-bombableinclude.xml">
+<PropertyList include="truman-bombableinclude.xml">
   <description>USS Harry S.Truman - CVN-75</description>
-  <author>Vivian Meazza, Alexis Bory, Michael Habarta, Aether</author>
+  <author>Vivian Meazza, Alexis Bory, Michael Habarta</author>
   <status>early-production</status>
   <path>truman.ac</path>
 
-  
+
+
 
   <!--<model>
     <name>Glide-path</name>

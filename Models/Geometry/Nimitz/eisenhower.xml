@@ -2,13 +2,14 @@
 <!-- the Eisenhower model is based on the work by Javier Fernandez, which
 he has kindly given FGFS permission to use. Very little of the original,
 apart from most of the very excellent textures, remain. -->
-<PropertyList  include="eisenhower-bombableinclude.xml">
+<PropertyList include="eisenhower-bombableinclude.xml">
 	<description>USS Eisenhower - CVN-69</description>
-	<author>Vivian Meazza, Aether</author>
+	<author>Vivian Meazza</author>
 	<status>early-production</status>
 	<path>nimitz.ac</path>
 
-    
+
+
     <!-- crew to be added later
 
     <model>
