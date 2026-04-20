@@ -2,12 +2,12 @@
 
 <PropertyList  include="akizuki-bombableinclude.xml">
 	<description>JMSDF akizuki - DD-115</description>
-	<author>Hitoshi Uchida, Aether</author>
+	<author>Hitoshi Uchida</author>
 	<status>V1.0</status>
 
 	<path>akizuki.ac</path>
 
-   
+
 
 
 	<animation>
