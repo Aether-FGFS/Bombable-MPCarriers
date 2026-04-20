@@ -2,12 +2,12 @@
 
 <PropertyList  include="Izumo-bombableinclude.xml">
 	<description>JMSDF Izumo - DDH-183</description>
-	<author>Hitoshi Uchida, Aether</author>
+	<author>Hitoshi Uchida</author>
 	<status>V1.7</status>
 
 	<path>Izumo.ac</path>
 
-   
+
 
    <effect>
     <inherits-from>Effects/flightdeck</inherits-from>
