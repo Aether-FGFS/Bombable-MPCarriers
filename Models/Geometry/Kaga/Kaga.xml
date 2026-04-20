@@ -1,13 +1,13 @@
 <?xml version="1.0"?>
 
-<PropertyList  include="Kaga-bombableinclude.xml">
+<PropertyList include="Kaga-bombableinclude.xml">
 	<description>JMSDF kaga - DDH-184</description>
-	<author>Hitoshi Uchida, Aether</author>
+	<author>Hitoshi Uchida</author>
 	<status>V1.3</status>
 
 	<path>kaga.ac</path>
 
-   
+
 
    <effect>
     <inherits-from>Effects/flightdeck</inherits-from>
