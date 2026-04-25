@@ -20,7 +20,7 @@
 	 	<z-m>0</z-m>
          </offsets>
 
-
+    <frictionFactor type="double">0.4</frictionFactor>
 
 	 <model>
 		 <name>Wakes</name>
