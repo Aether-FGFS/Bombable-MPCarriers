@@ -2,13 +2,15 @@
 <!-- The Eisenhower model is based on the work by Javier Fernandez, which
 he has kindly given FGFS permission to use. Very little of the original,
 apart from most of the very excellent textures, remain. -->
-<PropertyList  include="vinson-bombableinclude.xml">
+<PropertyList include="vinson-bombableinclude.xml">
 	<description>USS Vinson - CVN-70</description>
-	<author>Vivian Meazza, Alexis Bory, Aether</author>
+	<author>Vivian Meazza, Alexis Bory</author>
 	<status>early-production</status>
 	<path>vinson.ac</path>
 
-	
+
+		
+
 
     <!--<model>
       <path>Models/Geometry/Nimitz/Crew/crew.xml</path>
