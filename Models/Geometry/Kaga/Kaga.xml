@@ -7,7 +7,7 @@
 
 	<path>kaga.ac</path>
 
-
+    <frictionFactor type="double">0.4</frictionFactor>
 
    <effect>
     <inherits-from>Effects/flightdeck</inherits-from>
