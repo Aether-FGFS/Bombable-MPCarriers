@@ -6,6 +6,8 @@
 	<status>early-production</status>
 	<path>Kuznetsov.ac</path>
 
+	<frictionFactor type="double">0.4</frictionFactor>
+
 	<model>
 		<name>flols</name>
 		<path>Models/Geometry/Nimitz/Models/flols.xml</path>
