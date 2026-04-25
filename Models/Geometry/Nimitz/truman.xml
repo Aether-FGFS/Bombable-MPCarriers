@@ -16,6 +16,8 @@ by Thorsten Renk 2017
   <status>early-production</status>
   <path>truman.ac</path>
 
+  <frictionFactor type="double">0.4</frictionFactor>
+
 
 
 

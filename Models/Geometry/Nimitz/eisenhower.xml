@@ -9,6 +9,8 @@ apart from most of the very excellent textures, remain. -->
 	<path>nimitz.ac</path>
 
 
+    <frictionFactor type="double">0.4</frictionFactor>
+
 
     <!-- crew to be added later
 

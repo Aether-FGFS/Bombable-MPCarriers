@@ -2,13 +2,13 @@
 <!-- the Eisenhower model is based on the work by Javier Fernandez, which
 he has kindly given FGFS permission to use. Very little of the original,
 apart from most of the very excellent textures, remain. -->
-<PropertyList  include="nimitz-bombableinclude.xml">
+<PropertyList include="nimitz-bombableinclude.xml">
 	<description>USS Nimitz - CVN-68</description>
 	<author>Vivian Meazza</author>
 	<status>early-production</status>
 	<path>nimitz.ac</path>
 
-
+    <frictionFactor type="double">0.4</frictionFactor>
 
 
     <!-- crew to be added later
@@ -3947,6 +3947,7 @@ apart from most of the very excellent textures, remain. -->
       </binding>
     </hovered>
   </animation>
+
 
 
 
