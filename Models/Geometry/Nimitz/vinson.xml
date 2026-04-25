@@ -8,6 +8,8 @@ apart from most of the very excellent textures, remain. -->
 	<status>early-production</status>
 	<path>vinson.ac</path>
 
+	<frictionFactor type="double">0.4</frictionFactor>
+
 
 		
 
