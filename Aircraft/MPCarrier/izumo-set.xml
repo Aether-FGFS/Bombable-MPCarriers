@@ -72,7 +72,7 @@
 		</ai>
 
 		<mp-carriers>
-			<Izumo-callsign type="string"></Izumo-callsign>
+			<izumo-callsign type="string"></izumo-callsign>
 		</mp-carriers>
 
                 <multiplay>
