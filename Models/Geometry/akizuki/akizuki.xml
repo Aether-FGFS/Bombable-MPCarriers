@@ -7,7 +7,7 @@
 
 	<path>akizuki.ac</path>
 
-
+    <frictionFactor type="double">0.4</frictionFactor>
 
 
 	<animation>
