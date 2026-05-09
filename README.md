@@ -10,7 +10,7 @@ Bombable MPCarriers are compatible with default MPCarriers. Elevators,Jsb,lights
  carrier over MP, use Bombable-Carriers-Ships package Carrier. 
 
 To change position of MPCarrier, navigate to fgdata/AI folder and find desired Carrier. Open 
- Scenery carrier_demo file and change latitude and longitude coordinates.  
+ Scenery carrier_demo.xml file and change latitude and longitude coordinates.  
  
 
  Remember that war is disaster for regular people and soldiers.
